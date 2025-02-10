@@ -74,6 +74,21 @@ describe('CatsService Test cases', () => {
         );
         expect(() => service.fetchAllCats()).toThrow(errorMessage);
       });
+
+      it('should return no cats found 404 if filtered cats not found', () => {
+        errorMessage = 'No Cats Found!';
+
+        jest.spyOn(service, 'fetchAllCats').mockImplementation(() => {
+          throw new NotFoundException(errorMessage);
+        });
+
+        expect(() => service.fetchAllCats({ name: 'destroyer' })).toThrow(
+          NotFoundException,
+        );
+        expect(() => service.fetchAllCats({ name: 'destroyer' })).toThrow(
+          errorMessage,
+        );
+      });
     });
   });
 
