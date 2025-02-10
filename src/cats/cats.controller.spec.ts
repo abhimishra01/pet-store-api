@@ -84,6 +84,7 @@ describe('CatsController', () => {
         mockCatsService.fetchCatById.mockImplementation(() => {
           throw new NotFoundException(errorMessage);
         });
+
         expect(() => controller.getCatBydId(catId)).toThrow(NotFoundException);
         expect(() => controller.getCatBydId(catId)).toThrow(errorMessage);
       });

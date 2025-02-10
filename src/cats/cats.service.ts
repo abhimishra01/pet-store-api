@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { Cat } from './entities/cat.entity';
@@ -33,7 +34,33 @@ export class CatsService {
     return cat;
   }
 
-  createCat(createCatDto: CreateCatDto) {}
+  createCat(createCatDto: CreateCatDto) {
+    if (!createCatDto) {
+      throw new BadRequestException('Please provide correct payload');
+    }
 
-  deleteCat(id: number) {}
+    try {
+      const newCat = { id: Date.now(), ...createCatDto };
+      this.cats.push(newCat);
+      return { message: 'Cat Created Successfuly!' };
+    } catch (error) {
+      // log the error via logger
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  deleteCat(id: number) {
+    if (!id) {
+      throw new BadRequestException(
+        'Please provide a valid `id` in Query param',
+      );
+    }
+
+    try {
+      this.cats.filter((cat) => cat.id === id);
+      return { message: 'Successfuly deleted the cat entry!' };
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 }

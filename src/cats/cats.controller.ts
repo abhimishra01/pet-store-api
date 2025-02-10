@@ -28,5 +28,7 @@ export class CatsController {
   }
 
   @Post(':id')
-  deleteCat(@Param('id', ParseIntPipe) id: number) {}
+  deleteCat(@Param('id', ParseIntPipe) id: number) {
+    return this.catService.deleteCat(id);
+  }
 }
