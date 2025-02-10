@@ -12,11 +12,15 @@ export class CatsService {
   private cats: Cat[] = [{ id: 1, name: 'kitty', breed: 'indian' }];
 
   fetchAllCats(): Cat[] {
-    if (this.cats.length === 0) {
-      throw new NotFoundException('No cats found!');
-    }
+    try {
+      if (this.cats.length === 0) {
+        throw new NotFoundException('No cats found!');
+      }
 
-    return this.cats;
+      return this.cats;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   fetchCatById(id: number) {
