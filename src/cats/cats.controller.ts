@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -11,6 +12,7 @@ import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 import {
   ApiBody,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -28,7 +30,7 @@ export class CatsController {
   @Get()
   @ApiOperation({ summary: 'Fetch all cats' })
   @ApiOkResponse({ type: Cat, isArray: true, description: 'All the cats' })
-  @ApiResponse({ status: 404, description: 'No cats found!' })
+  @ApiNotFoundResponse({ description: 'No cats found!' })
   @ApiResponse({ status: 500, description: 'Internal Server Error!' })
   getCats(@Query() queryParams: GetCatDto) {
     return this.catService.fetchAllCats(queryParams);
@@ -57,7 +59,7 @@ export class CatsController {
     return this.catService.createCat(createCatDto);
   }
 
-  @Post(':id')
+  @Delete(':id')
   @ApiResponse({
     status: 201,
     description: 'Successfuly deleted the cat entry!',
@@ -68,11 +70,14 @@ export class CatsController {
   })
   @ApiResponse({
     status: 404,
-    description: `Please provide a valid cat id`,
+    description: `Provided Cat Id Doesn't exist`,
   })
   @ApiResponse({
     status: 500,
     description: 'Internal Server Error!',
+  })
+  @ApiNotFoundResponse({
+    description: `Not found`,
   })
   @ApiOperation({ summary: 'Delete a cat by Id' })
   deleteCat(@Param('id', ParseIntPipe) id: number) {

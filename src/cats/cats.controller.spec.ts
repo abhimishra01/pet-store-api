@@ -37,7 +37,6 @@ describe('CatsController', () => {
   describe('getCats', () => {
     describe('success', () => {
       it('should be return cats', () => {
-        const cats = [{ id: 1, name: 'kitty', breed: 'indian' }];
         mockCatsService.fetchAllCats.mockReturnValue(cats);
 
         expect(controller.getCats(undefined as unknown as GetCatDto)).toEqual(

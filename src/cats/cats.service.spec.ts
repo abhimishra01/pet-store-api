@@ -190,7 +190,7 @@ describe('CatsService Test cases', () => {
       let errorMessage;
 
       it('shold throw not found exception if the id is invalid', () => {
-        errorMessage = `Please provide a valid cat id`;
+        errorMessage = `Provided Cat Id Doesn't exist`;
         expect(() => service.deleteCat(999)).toThrow(NotFoundException);
         expect(() => service.deleteCat(999)).toThrow(errorMessage);
       });

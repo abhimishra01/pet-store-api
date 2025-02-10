@@ -84,7 +84,7 @@ export class CatsService {
 
     const catIndex = this.cats.findIndex((cat) => cat.id === id);
     if (catIndex == -1) {
-      throw new NotFoundException(`Please provide a valid cat id`);
+      throw new NotFoundException(`Provided Cat Id Doesn't exist`);
     }
     try {
       this.cats.filter((cat) => cat.id === id);
