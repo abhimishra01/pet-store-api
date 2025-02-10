@@ -3,6 +3,7 @@ import { CatsController } from './cats.controller';
 import { CatsService } from './cats.service';
 import { Cat } from './entities/cat.entity';
 import { NotFoundException } from '@nestjs/common';
+import { GetCatDto } from './dto/get-cat.dto';
 
 describe('CatsController', () => {
   let controller: CatsController;
@@ -39,7 +40,9 @@ describe('CatsController', () => {
         const cats = [{ id: 1, name: 'kitty', breed: 'indian' }];
         mockCatsService.fetchAllCats.mockReturnValue(cats);
 
-        expect(controller.getCats()).toEqual(cats);
+        expect(controller.getCats(undefined as unknown as GetCatDto)).toEqual(
+          cats,
+        );
         expect(service.fetchAllCats).toHaveBeenCalledTimes(1);
       });
 
@@ -49,8 +52,12 @@ describe('CatsController', () => {
             throw new NotFoundException('No cats found!');
           });
 
-          expect(() => controller.getCats()).toThrow(NotFoundException);
-          expect(() => controller.getCats()).toThrow('No cats found!');
+          expect(() =>
+            controller.getCats(undefined as unknown as GetCatDto),
+          ).toThrow(NotFoundException);
+          expect(() =>
+            controller.getCats(undefined as unknown as GetCatDto),
+          ).toThrow('No cats found!');
         });
       });
     });

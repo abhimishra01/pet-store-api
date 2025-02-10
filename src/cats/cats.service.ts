@@ -6,21 +6,43 @@ import {
 } from '@nestjs/common';
 import { Cat } from './entities/cat.entity';
 import { CreateCatDto } from './dto/create-cat.dto';
+import { GetCatDto } from './dto/get-cat.dto';
 
 @Injectable()
 export class CatsService {
-  private cats: Cat[] = [{ id: 1, name: 'kitty', breed: 'indian' }];
+  private cats: Cat[] = [
+    { id: 1, name: 'kitty', breed: 'indian' },
+    { id: 2, name: 'cat', breed: 'persian' },
+    { id: 3, name: 'whiskers', breed: 'indian' },
+    { id: 4, name: 'kitty', breed: 'indian' },
+  ];
 
-  fetchAllCats(): Cat[] {
+  fetchAllCats(payload?: GetCatDto): Cat[] {
+    if (this.cats.length === 0) {
+      throw new NotFoundException('No cats found!');
+    }
+
+    // If no filters are provided, return all cats
     try {
-      if (this.cats.length === 0) {
-        throw new NotFoundException('No cats found!');
+      if (!payload || Object.keys(payload).length === 0) {
+        return this.cats;
       }
-
-      return this.cats;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
+
+    // filteredCats
+    const filteredCats = this.cats.filter((cat) => {
+      return (
+        (!payload.name || cat.name === payload.name) &&
+        (!payload.breed || cat.breed === payload.breed)
+      );
+    });
+    if (filteredCats.length === 0) {
+      throw new NotFoundException('No cats found!');
+    }
+
+    return filteredCats;
   }
 
   fetchCatById(id: number) {
@@ -60,6 +82,10 @@ export class CatsService {
       );
     }
 
+    const catIndex = this.cats.findIndex((cat) => cat.id === id);
+    if (catIndex == -1) {
+      throw new NotFoundException(`Please provide a valid cat id`);
+    }
     try {
       this.cats.filter((cat) => cat.id === id);
       return { message: 'Successfuly deleted the cat entry!' };

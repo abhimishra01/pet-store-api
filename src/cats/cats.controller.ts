@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
@@ -12,10 +13,12 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { Cat } from './entities/cat.entity';
+import { GetCatDto } from './dto/get-cat.dto';
 
 @ApiTags('Cats')
 @Controller('cats')
@@ -27,8 +30,8 @@ export class CatsController {
   @ApiOkResponse({ type: Cat, isArray: true, description: 'All the cats' })
   @ApiResponse({ status: 404, description: 'No cats found!' })
   @ApiResponse({ status: 500, description: 'Internal Server Error!' })
-  getCats() {
-    return this.catService.fetchAllCats();
+  getCats(@Query() queryParams: GetCatDto) {
+    return this.catService.fetchAllCats(queryParams);
   }
 
   @Get(':id')
@@ -62,6 +65,10 @@ export class CatsController {
   @ApiResponse({
     status: 400,
     description: 'Please provide a valid `id` in Query param',
+  })
+  @ApiResponse({
+    status: 404,
+    description: `Please provide a valid cat id`,
   })
   @ApiResponse({
     status: 500,

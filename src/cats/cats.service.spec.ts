@@ -1,17 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CatsService } from './cats.service';
-import { Cat } from './entities/cat.entity';
 import {
   BadRequestException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
+import { CatsService } from './cats.service';
+import { Cat } from './entities/cat.entity';
 
 describe('CatsService Test cases', () => {
   let service: CatsService;
   let cat = { id: 1, name: 'kitty', breed: 'indian' };
-  let cats: Cat[] = [cat];
+  let cats: Cat[] = [
+    { id: 1, name: 'kitty', breed: 'indian' },
+    { id: 2, name: 'cat', breed: 'persian' },
+    { id: 3, name: 'whiskers', breed: 'indian' },
+    { id: 4, name: 'kitty', breed: 'indian' },
+  ];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,6 +31,8 @@ describe('CatsService Test cases', () => {
   });
 
   describe('fetchAllCats tests', () => {
+    let breed = 'indian';
+    let name = 'kitty';
     describe('Success scenario', () => {
       it('fetchAllCats should be defined', () => {
         expect(service.fetchAllCats).toBeDefined();
@@ -34,14 +41,38 @@ describe('CatsService Test cases', () => {
       it('fetchAllCats should return all cats', () => {
         expect(service.fetchAllCats()).toEqual(cats);
       });
+
+      it('it should filter the cats by breed', () => {
+        const filterCats = cats.filter((cat) => cat.breed === breed);
+        expect(service.fetchAllCats({ breed })).toEqual(filterCats);
+      });
+
+      it('it should filter the cats by name', () => {
+        const filterCats = cats.filter((cat) => cat.name === name);
+        expect(service.fetchAllCats({ name })).toEqual(filterCats);
+      });
     });
+
     describe('Failure scenarios', () => {
+      let errorMessage;
       it('fetchAllCats should throw not found 404 error', () => {
+        errorMessage = 'No Cats Found!';
         jest.spyOn(service, 'fetchAllCats').mockImplementation(() => {
-          throw new NotFoundException('No cats found!');
+          throw new NotFoundException(errorMessage);
         });
         expect(() => service.fetchAllCats()).toThrow(NotFoundException);
-        expect(() => service.fetchAllCats()).toThrow('No cats found!');
+        expect(() => service.fetchAllCats()).toThrow(errorMessage);
+      });
+
+      it('it should throw internal server error', () => {
+        errorMessage = 'Internal Server Error';
+        jest.spyOn(service, 'fetchAllCats').mockImplementation(() => {
+          throw new InternalServerErrorException(errorMessage);
+        });
+        expect(() => service.fetchAllCats()).toThrow(
+          InternalServerErrorException,
+        );
+        expect(() => service.fetchAllCats()).toThrow(errorMessage);
       });
     });
   });
@@ -59,7 +90,7 @@ describe('CatsService Test cases', () => {
       });
 
       it('fetchCatById should return all cats', () => {
-        expect(service.fetchCatById(catId)).toEqual(cat);
+        expect(service.fetchCatById(catId)).toEqual(cats[0]);
       });
     });
 
@@ -125,6 +156,7 @@ describe('CatsService Test cases', () => {
       });
     });
   });
+
   describe('deleteCat', () => {
     let catId = 1;
 
