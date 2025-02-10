@@ -141,6 +141,13 @@ describe('CatsService Test cases', () => {
     });
     describe('failure', () => {
       let errorMessage;
+
+      it('shold throw not found exception if the id is invalid', () => {
+        errorMessage = `Please provide a valid cat id`;
+        expect(() => service.deleteCat(999)).toThrow(NotFoundException);
+        expect(() => service.deleteCat(999)).toThrow(errorMessage);
+      });
+
       it('should throw a Bad request exception if no id provided', () => {
         errorMessage = 'Please provide a valid `id` in Query param';
         expect(() => service.deleteCat(undefined as unknown as number)).toThrow(
