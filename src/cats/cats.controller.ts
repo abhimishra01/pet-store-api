@@ -11,11 +11,11 @@ import {
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 import {
+  ApiBadRequestResponse,
   ApiBody,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -55,6 +55,7 @@ export class CatsController {
   })
   @ApiResponse({ status: 400, description: 'Please provide correct payload' })
   @ApiResponse({ status: 500, description: 'Internal Server Error!' })
+  @ApiBadRequestResponse()
   createCat(@Body() createCatDto: CreateCatDto) {
     return this.catService.createCat(createCatDto);
   }
